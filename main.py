@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Importa o Flask-CORS para permitir requisições de qualquer origem
 import bordero  # Importa o arquivo responsável pelo processamento de borderô
 import cnpja    # Importa o arquivo responsável pela consulta de CNPJ
 import os
 
 app = Flask(__name__)
+CORS(app)  # Habilita CORS para aceitar requisições de qualquer origem
 
 # Rota para extrair dados de um borderô
 @app.route('/extrair-bordero', methods=['POST'])
