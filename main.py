@@ -5,6 +5,8 @@ import logging
 from pypdf import PdfReader
 from flask import Flask, request, jsonify
 import requests
+import os
+
 
 # Configuração de logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -124,5 +126,6 @@ def processar_pdf():
     else:
         return jsonify({"error": "Falha ao extrair texto do PDF"}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5000))  # Obtém a porta da variável de ambiente ou usa a 5000
+    app.run(host='0.0.0.0', port=port, debug=True)  # Vincula a 0.0.0.0 para escutar externamente
