@@ -107,6 +107,33 @@ def extrair_canais_vendas_avulsas(texto):
         canais.append(canal)
     return canais
 
+def extrair_cortesias_por_nome(texto):
+    """
+    Esta função usa expressões regulares para capturar as cortesias por nome e organiza os dados em uma lista de dicionários.
+    """
+    padrao = r'Setor\s+Nome de Cortesia\s+Quantidade\n(.+?)(?=Total \d+)'  # Define o padrão para capturar o bloco de cortesias por nome
+    match = re.search(padrao, texto, re.DOTALL)
+
+    if not match:
+        return []
+
+    # Extração dos detalhes das cortesias
+    blocos = match.group(1).strip().split('\n\n')
+    cortesias = []
+
+    for bloco in blocos:
+        linhas = bloco.split('\n')
+        setor = linhas[0].split(' ')[1]  # Captura o setor
+        for linha in linhas[1:]:
+            nome_cortesia, quantidade = re.match(r'(.+)\s+(\d+)', linha.strip()).groups()
+            cortesias.append({
+                "setor": setor,
+                "nome_cortesia": nome_cortesia,
+                "quantidade": int(quantidade)
+            })
+
+    return cortesias
+
 # Função principal para processar o PDF de borderô
 def processar_bordero(drive_id):
     output_pdf = "arquivo_baixado.pdf"
@@ -118,9 +145,13 @@ def processar_bordero(drive_id):
                 "vendas_avulsas": extrair_vendas_avulsas(texto_extraido),
                 "vendas_assinaturas": extrair_vendas_assinaturas(texto_extraido),
                 "forma_pagto_vendas_avulsas": extrair_formas_pagto_vendas_avulsas(texto_extraido),
-                "canais_vendas_avulsas": extrair_canais_vendas_avulsas(texto_extraido)
+                "canais_vendas_avulsas": extrair_canais_vendas_avulsas(texto_extraido),
+                "cortesias_por_nome": extrair_cortesias_por_nome(texto_extraido)  # Inclui cortesias por nome
+
             }
             return dados
         else:
             return {"error": "Falha ao extrair texto do PDF"}
     return {"error": "Falha ao baixar PDF"}
+
+
