@@ -162,12 +162,42 @@ def extrair_canais_vendas_avulsas(texto):
 
     return canais_vendas
     
+# Função para extrair formas de pagamento das vendas de assinaturas
+def extrair_formas_pagto_vendas_assinaturas(texto):
+    padrao = r'(Cartão de Crédito Online|Boleto|Cartão de Crédito Online Parcelado)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)'
+    matches = re.findall(padrao, texto)
+
+    formas_pagto_assinaturas = []
+    total_formas_pagto_assinaturas = 0
+
+    for match in matches:
+        valor_liquido = float(match[4].replace('.', '').replace(',', '.'))
+        forma = {
+            "forma_pagamento": match[0],
+            "valor_bruto": float(match[1].replace('.', '').replace(',', '.')),
+            "taxa_servico": float(match[2].replace('.', '').replace(',', '.')),
+            "taxa_operacao": float(match[3].replace('.', '').replace(',', '.')),
+            "valor_liquido": valor_liquido
+        }
+        formas_pagto_assinaturas.append(forma)
+        total_formas_pagto_assinaturas += valor_liquido
+
+    # Adicionando totalizador
+    formas_pagto_assinaturas.append({
+        "totalizador": "Total Formas de Pagamento Vendas Assinaturas",
+        "total": total_formas_pagto_assinaturas
+    })
+
+    return formas_pagto_assinaturas
+
+
 
 # Função para gerar o JSON completo
 def gerar_json_completo(texto):
     vendas_avulsas = extrair_vendas_avulsas(texto)
     vendas_assinaturas = extrair_vendas_assinaturas(texto)
     forma_pagto_vendas_avulsas = extrair_formas_pagto_vendas_avulsas(texto)
+    forma_pagto_vendas_assinaturas = extrair_formas_pagto_vendas_assinaturas(texto)
     cortesias = extrair_cortesias_por_nome(texto)
     canais_vendas_avulsas = extrair_canais_vendas_avulsas(texto)
 
@@ -176,6 +206,7 @@ def gerar_json_completo(texto):
         "vendas_avulsas": vendas_avulsas,
         "vendas_assinaturas": vendas_assinaturas,
         "forma_pagto_vendas_avulsas": forma_pagto_vendas_avulsas,
+        "forma_pagto_vendas_assinaturas": forma_pagto_vendas_assinaturas,
         "cortesias_por_nome": cortesias,
         "canais_vendas_avulsas": canais_vendas_avulsas
     }
