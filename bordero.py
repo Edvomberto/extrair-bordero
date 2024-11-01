@@ -20,7 +20,7 @@ def extrair_vendas_avulsas(texto):
     total_vendas_avulsas = 0
 
     for i, match in enumerate(matches, start=1):
-        total = float(match[5].replace(',', '.'))
+        total = float(match[5].replace('.', '').replace(',', '.'))
         venda = {
             "id_concerto": i,
             "setor": match[0],
