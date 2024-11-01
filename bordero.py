@@ -137,19 +137,47 @@ def extrair_formas_pagto_vendas_avulsas(texto):
 
     return formas_pagto
 
-# Função para gerar o JSON completo incluindo todas as informações
+# Função para extrair canais de vendas avulsas
+def extrair_canais_vendas_avulsas(texto):
+    padrao = r'(Administrativo|Bilheteria|Totem|Site)\s+R\$\s+([\d.,]+)\s+\d+\s+[\d.]+ %'
+    matches = re.findall(padrao, texto)
+
+    canais_vendas = []
+    total_vendas_canais = 0
+
+    for match in matches:
+        valor = float(match[1].replace('.', '').replace(',', '.'))
+        canal = {
+            "canal": match[0],
+            "valor": valor
+        }
+        canais_vendas.append(canal)
+        total_vendas_canais += valor
+
+    # Adicionando totalizador
+    canais_vendas.append({
+        "totalizador": "Total Vendas Canais Avulsas",
+        "total": total_vendas_canais
+    })
+
+    return canais_vendas
+    
+
+# Função para gerar o JSON completo
 def gerar_json_completo(texto):
     vendas_avulsas = extrair_vendas_avulsas(texto)
     vendas_assinaturas = extrair_vendas_assinaturas(texto)
     forma_pagto_vendas_avulsas = extrair_formas_pagto_vendas_avulsas(texto)
     cortesias = extrair_cortesias_por_nome(texto)
+    canais_vendas_avulsas = extrair_canais_vendas_avulsas(texto)
 
-    # Montando o JSON final com todas as informações
+    # Montando o JSON final com totalizadores
     json_completo = {
         "vendas_avulsas": vendas_avulsas,
         "vendas_assinaturas": vendas_assinaturas,
         "forma_pagto_vendas_avulsas": forma_pagto_vendas_avulsas,
-        "cortesias_por_nome": cortesias
+        "cortesias_por_nome": cortesias,
+        "canais_vendas_avulsas": canais_vendas_avulsas
     }
     return json_completo
 
