@@ -18,6 +18,7 @@ def extrair_vendas_avulsas(texto):
 
     vendas_avulsas = []
     total_vendas_avulsas = 0
+    total_quantidade_avulsas = 0
 
     for i, match in enumerate(matches, start=1):
         total = float(match[5].replace('.', '').replace(',', '.'))
@@ -34,16 +35,14 @@ def extrair_vendas_avulsas(texto):
         }
         vendas_avulsas.append(venda)
         total_vendas_avulsas += total
+        total_quantidade_avulsas += int(match[3])
 
-    # Adicionando o totalizador
-    vendas_avulsas.append({
-        "totalizador": "Total Vendas Avulsas",
-        "total": total_vendas_avulsas
-    })
+    qtd_avulsas_int = total_quantidade_avulsas
+    val_avulsas_int = total_vendas_avulsas
 
-    return vendas_avulsas
+    return vendas_avulsas, total_vendas_avulsas, total_quantidade_avulsas, qtd_avulsas_int, val_avulsas_int
 
-# Função para extrair cortesias por nome com totalizador no final, sem deixar linhas de fora
+# Função para extrair cortesias por nome com totalizador no final
 def extrair_cortesias_por_nome(texto):
     cortesias = []
     capturando = False
@@ -70,22 +69,18 @@ def extrair_cortesias_por_nome(texto):
                 "quantidade": quantidade
             })
 
-    # Adicionar totalizador no final
-    cortesias.append({
-        "setor": "Totalizador",
-        "nome": "Total de Cortesias",
-        "quantidade": total_quantidades
-    })
+    qtd_cortesia_int = total_quantidades
 
-    return cortesias
+    return cortesias, total_quantidades, qtd_cortesia_int
 
-# Função para extrair vendas de assinaturas usando regex, sem omitir informações
+# Função para extrair vendas de assinaturas usando regex
 def extrair_vendas_assinaturas(texto):
     padrao = r'Piso (\w+)\s+(\w+(?:\s+\w+)*)\s+(Série [\w\s]+)\s+(\w+)\s+(\d+)\s+R\$\s+([\d.,]+)'
     matches = re.findall(padrao, texto)
 
     vendas_assinaturas = []
     total_assinaturas = 0
+    total_quantidade_assinaturas = 0
 
     for i, match in enumerate(matches, start=1):
         valor_formatado = match[5].replace('.', '').replace(',', '.')
@@ -100,16 +95,14 @@ def extrair_vendas_assinaturas(texto):
         }
         vendas_assinaturas.append(assinatura)
         total_assinaturas += float(valor_formatado)
+        total_quantidade_assinaturas += int(match[4])
 
-    # Adicionando totalizador
-    vendas_assinaturas.append({
-        "totalizador": "Total Vendas Assinaturas",
-        "total": total_assinaturas
-    })
+    qtd_assinatura_int = total_quantidade_assinaturas
+    val_assinatura_int = total_assinaturas
 
-    return vendas_assinaturas
+    return vendas_assinaturas, total_assinaturas, total_quantidade_assinaturas, qtd_assinatura_int, val_assinatura_int
 
-# Função para extrair as formas de pagamento das vendas avulsas, incluindo valores detalhados
+# Função para extrair formas de pagamento das vendas avulsas
 def extrair_formas_pagto_vendas_avulsas(texto):
     padrao = r'(Cartão de Crédito Online Parcelado|PIX|Cartão de Crédito Online|INTI Wallet|Dinheiro|POS Cartão de Crédito)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)'
     matches = re.findall(padrao, texto)
@@ -129,39 +122,8 @@ def extrair_formas_pagto_vendas_avulsas(texto):
         formas_pagto.append(forma)
         total_formas_pagto += valor_liquido
 
-    # Adicionando totalizador
-    formas_pagto.append({
-        "totalizador": "Total Formas de Pagamento Vendas Avulsas",
-        "total": total_formas_pagto
-    })
+    return formas_pagto, total_formas_pagto
 
-    return formas_pagto
-
-# Função para extrair canais de vendas avulsas
-def extrair_canais_vendas_avulsas(texto):
-    padrao = r'(Administrativo|Bilheteria|Totem|Site)\s+R\$\s+([\d.,]+)\s+\d+\s+[\d.]+ %'
-    matches = re.findall(padrao, texto)
-
-    canais_vendas = []
-    total_vendas_canais = 0
-
-    for match in matches:
-        valor = float(match[1].replace('.', '').replace(',', '.'))
-        canal = {
-            "canal": match[0],
-            "valor": valor
-        }
-        canais_vendas.append(canal)
-        total_vendas_canais += valor
-
-    # Adicionando totalizador
-    canais_vendas.append({
-        "totalizador": "Total Vendas Canais Avulsas",
-        "total": total_vendas_canais
-    })
-
-    return canais_vendas
-    
 # Função para extrair formas de pagamento das vendas de assinaturas
 def extrair_formas_pagto_vendas_assinaturas(texto):
     padrao = r'(Cartão de Crédito Online|Boleto|Cartão de Crédito Online Parcelado)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)\s+R\$\s+([\d.,]+)'
@@ -182,33 +144,75 @@ def extrair_formas_pagto_vendas_assinaturas(texto):
         formas_pagto_assinaturas.append(forma)
         total_formas_pagto_assinaturas += valor_liquido
 
-    # Adicionando totalizador
-    formas_pagto_assinaturas.append({
-        "totalizador": "Total Formas de Pagamento Vendas Assinaturas",
-        "total": total_formas_pagto_assinaturas
-    })
+    return formas_pagto_assinaturas, total_formas_pagto_assinaturas
 
-    return formas_pagto_assinaturas
+# Função para extrair canais de vendas avulsas
+def extrair_canais_vendas_avulsas(texto):
+    padrao = r'(Administrativo|Bilheteria|Totem|Site)\s+R\$\s+([\d.,]+)\s+\d+\s+[\d.]+ %'
+    matches = re.findall(padrao, texto)
 
+    canais_vendas = []
+    total_vendas_canais = 0
 
+    for match in matches:
+        valor = float(match[1].replace('.', '').replace(',', '.'))
+        canal = {
+            "canal": match[0],
+            "valor": valor
+        }
+        canais_vendas.append(canal)
+        total_vendas_canais += valor
 
-# Função para gerar o JSON completo
+    return canais_vendas, total_vendas_canais
+
+# Função para gerar o JSON completo com o nó "totalizadores"
 def gerar_json_completo(texto):
-    vendas_avulsas = extrair_vendas_avulsas(texto)
-    vendas_assinaturas = extrair_vendas_assinaturas(texto)
-    forma_pagto_vendas_avulsas = extrair_formas_pagto_vendas_avulsas(texto)
-    forma_pagto_vendas_assinaturas = extrair_formas_pagto_vendas_assinaturas(texto)
-    cortesias = extrair_cortesias_por_nome(texto)
-    canais_vendas_avulsas = extrair_canais_vendas_avulsas(texto)
+    # Extraindo vendas avulsas e totais
+    vendas_avulsas, val_avulsas_ia, qtde_avulsas_ia, qtd_avulsas_int, val_avulsas_int = extrair_vendas_avulsas(texto)
 
-    # Montando o JSON final com totalizadores
+    # Extraindo vendas de assinaturas e totais
+    vendas_assinaturas, val_assinatura_ia, qtd_assinatura_ia, qtd_assinatura_int, val_assinatura_int = extrair_vendas_assinaturas(texto)
+
+    # Extraindo cortesias e total
+    cortesias, qtd_cortesia_ia, qtd_cortesia_int = extrair_cortesias_por_nome(texto)
+
+    # Extraindo formas de pagamento das vendas avulsas
+    forma_pagto_vendas_avulsas, total_formas_pagto = extrair_formas_pagto_vendas_avulsas(texto)
+
+    # Extraindo formas de pagamento das vendas de assinaturas
+    forma_pagto_vendas_assinaturas, total_formas_pagto_assinaturas = extrair_formas_pagto_vendas_assinaturas(texto)
+
+    # Extraindo canais de vendas avulsas
+    canais_vendas_avulsas, total_vendas_canais = extrair_canais_vendas_avulsas(texto)
+
+    # Montando o JSON final com o nó totalizadores
     json_completo = {
         "vendas_avulsas": vendas_avulsas,
         "vendas_assinaturas": vendas_assinaturas,
         "forma_pagto_vendas_avulsas": forma_pagto_vendas_avulsas,
         "forma_pagto_vendas_assinaturas": forma_pagto_vendas_assinaturas,
         "cortesias_por_nome": cortesias,
-        "canais_vendas_avulsas": canais_vendas_avulsas
+        "canais_vendas_avulsas": canais_vendas_avulsas,
+        "totalizadores": {
+            "val_avulsas_int": val_avulsas_int,
+            "qtd_avulsas_int": qtd_avulsas_int,
+           
+            "qtde_avulsas_ia": qtde_avulsas_ia,
+            "val_avulsas_ia": val_avulsas_ia,
+
+            "qtd_cortesia_int": qtd_cortesia_int,
+            "qtd_cortesia_ia": qtd_cortesia_ia,
+
+            "qtd_assinatura_int": qtd_assinatura_int,
+            "qtd_assinatura_ia": qtd_assinatura_ia,
+
+            "val_assinatura_int": val_assinatura_int,
+            "val_assinatura_ia": val_assinatura_ia,
+            
+            "total_formas_pagto_vendas_avulsas": total_formas_pagto,
+            "total_formas_pagto_vendas_assinaturas": total_formas_pagto_assinaturas,
+            "total_vendas_canais": total_vendas_canais
+        }
     }
     return json_completo
 
