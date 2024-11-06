@@ -148,22 +148,32 @@ def extrair_formas_pagto_vendas_assinaturas(texto):
 
 # Função para extrair canais de vendas avulsas
 def extrair_canais_vendas_avulsas(texto):
-    padrao = r'(Administrativo|Bilheteria|Totem|Site)\s+R\$\s+([\d.,]+)\s+\d+\s+[\d.]+ %'
+    padrao = r'(Administrativo|Bilheteria|Totem|Site)\s+R\$\s+([\d.,]+)\s+(\d+)\s+([\d.]+)\s*%'
     matches = re.findall(padrao, texto)
 
     canais_vendas = []
     total_vendas_canais = 0
+    total_quantidade_canais = 0
+    total_percentual_canais = 0.0
 
     for match in matches:
         valor = float(match[1].replace('.', '').replace(',', '.'))
+        quantidade = int(match[2])
+        percentual = float(match[3])
+
         canal = {
             "canal": match[0],
-            "valor": valor
+            "valor": valor,
+            "quantidade": quantidade,
+            "percentual": percentual
         }
         canais_vendas.append(canal)
         total_vendas_canais += valor
+        total_quantidade_canais += quantidade
+        total_percentual_canais += percentual
 
-    return canais_vendas, total_vendas_canais
+    return canais_vendas, total_vendas_canais, total_quantidade_canais, total_percentual_canais
+
 
 # Função para gerar o JSON completo com o nó "totalizadores"
 def gerar_json_completo(texto):
@@ -183,7 +193,7 @@ def gerar_json_completo(texto):
     forma_pagto_vendas_assinaturas, total_formas_pagto_assinaturas = extrair_formas_pagto_vendas_assinaturas(texto)
 
     # Extraindo canais de vendas avulsas
-    canais_vendas_avulsas, total_vendas_canais = extrair_canais_vendas_avulsas(texto)
+    canais_vendas_avulsas, total_vendas_canais, total_quantidade_canais, total_percentual_canais = extrair_canais_vendas_avulsas(texto)
 
     # Montando o JSON final com o nó totalizadores
     json_completo = {
@@ -208,7 +218,7 @@ def gerar_json_completo(texto):
 
             "val_assinatura_int": val_assinatura_int,
             "val_assinatura_ia": val_assinatura_ia,
-            
+
             "total_formas_pagto_vendas_avulsas": total_formas_pagto,
             "total_formas_pagto_vendas_assinaturas": total_formas_pagto_assinaturas,
             "total_vendas_canais": total_vendas_canais
