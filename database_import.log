@@ -1,0 +1,15 @@
+2024-11-18 12:02:47,216 - INFO - Starting data import process
+2024-11-18 12:02:47,255 - INFO - Connected (version 2.0, client OpenSSH_8.9p1)
+2024-11-18 12:02:47,511 - INFO - Authentication (publickey) failed.
+2024-11-18 12:02:47,544 - INFO - Authentication (publickey) failed.
+2024-11-18 12:02:47,601 - INFO - Authentication (password) successful!
+2024-11-18 12:02:47,602 - INFO - SSH connection test successful
+2024-11-18 12:02:47,603 - INFO - Connecting to SSH host 200.168.239.203...
+2024-11-18 12:02:47,628 - INFO - Connected (version 2.0, client OpenSSH_8.9p1)
+2024-11-18 12:02:47,858 - INFO - Authentication (publickey) failed.
+2024-11-18 12:02:47,890 - INFO - Authentication (publickey) failed.
+2024-11-18 12:02:47,982 - INFO - Authentication (password) successful!
+2024-11-18 12:02:47,983 - INFO - Setting up port forwarding...
+2024-11-18 12:02:47,984 - INFO - SSH tunnel closed
+2024-11-18 12:02:47,985 - ERROR - Fatal error: Failed to create SSH tunnel: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given
+2024-11-18 12:02:47,985 - ERROR - Unhandled exception: Failed to create SSH tunnel: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given

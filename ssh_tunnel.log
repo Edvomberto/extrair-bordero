@@ -1,0 +1,14 @@
+2024-11-18 12:04:40,696 - INFO - Connected (version 2.0, client OpenSSH_8.9p1)
+2024-11-18 12:04:40,860 - INFO - Authentication (publickey) failed.
+2024-11-18 12:04:40,897 - INFO - Authentication (publickey) failed.
+2024-11-18 12:04:40,959 - INFO - Authentication (password) successful!
+2024-11-18 12:04:40,960 - ERROR - Erro ao criar túnel SSH: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given
+2024-11-18 12:04:40,962 - ERROR - Erro durante execução: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given
+2024-11-18 12:04:40,962 - INFO - Processo finalizado
+2024-11-18 12:08:03,757 - INFO - Connected (version 2.0, client OpenSSH_8.9p1)
+2024-11-18 12:08:03,933 - INFO - Authentication (publickey) failed.
+2024-11-18 12:08:03,960 - INFO - Authentication (publickey) failed.
+2024-11-18 12:08:04,017 - INFO - Authentication (password) successful!
+2024-11-18 12:08:04,017 - ERROR - Erro ao criar túnel SSH: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given
+2024-11-18 12:08:04,018 - ERROR - Erro durante execução: Transport.request_port_forward() takes from 3 to 4 positional arguments but 5 were given
+2024-11-18 12:08:04,018 - INFO - Processo finalizado

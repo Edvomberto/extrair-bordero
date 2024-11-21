@@ -42,36 +42,44 @@ def extrair_vendas_avulsas(texto):
 
     return vendas_avulsas, total_vendas_avulsas, total_quantidade_avulsas, qtd_avulsas_int, val_avulsas_int
 
-# Função para extrair cortesias por nome com totalizador no final
 def extrair_cortesias_por_nome(texto):
+    import re
+
     cortesias = []
     capturando = False
     linhas = texto.splitlines()
     total_quantidades = 0
+
+    # Padrão atualizado para capturar "Setor", "Nome de Cortesia" e "Quantidade"
+    padrao = r'^(Piso\s\w+(?:\s\w+)*?)\s+(.+?)\s+(\d+)$'
 
     for linha in linhas:
         if 'Cortesias por nome' in linha:
             capturando = True
             continue
         if capturando:
-            if 'Total' in linha or not linha.strip():
+            if 'Total' in linha or not linha.strip():  # Fim da seção
                 break
-            partes = linha.rsplit(' ', 2)
-            if len(partes) < 3 or not partes[-1].isdigit():
-                continue
-            setor = partes[0].strip()
-            nome = partes[1].strip()
-            quantidade = int(partes[2])
-            total_quantidades += quantidade
-            cortesias.append({
-                "setor": setor,
-                "nome": nome,
-                "quantidade": quantidade
-            })
+            match = re.match(padrao, linha)
+            if match:
+                setor = match.group(1).strip()
+                nome_cortesia = match.group(2).strip()
+                quantidade = int(match.group(3))
+                total_quantidades += quantidade
+                cortesias.append({
+                    "setor": setor,
+                    "nome_cortesia": nome_cortesia,
+                    "quantidade": quantidade
+                })
+            else:
+                # Log de linhas não capturadas para depuração
+                print(f"Linha ignorada (não corresponde ao padrão): {linha}")
 
     qtd_cortesia_int = total_quantidades
 
     return cortesias, total_quantidades, qtd_cortesia_int
+
+
 
 # Função para extrair vendas de assinaturas usando regex
 def extrair_vendas_assinaturas(texto):
