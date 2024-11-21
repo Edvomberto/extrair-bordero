@@ -68,7 +68,7 @@ def extrair_cortesias_por_nome(texto):
                 total_quantidades += quantidade
                 cortesias.append({
                     "setor": setor,
-                    "nome_cortesia": nome_cortesia,
+                    "nome": nome_cortesia,
                     "quantidade": quantidade
                 })
             else:
